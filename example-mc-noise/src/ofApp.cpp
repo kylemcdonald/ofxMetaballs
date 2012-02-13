@@ -4,9 +4,8 @@ void ofApp::setup(){
 	ofSetVerticalSync(true);
 	nPoints = 32;
 	ballPoints = new ofPoint[nPoints];
-	ballMasses = new float[nPoints];	
-	m_pMetaballs = new CMetaballs(nPoints);
-	m_pMetaballs->SetGridSize(128);
+	ballMasses = new float[nPoints];
+	m_pMetaballs.SetGridSize(128);
 	CMarchingCubes::BuildTables();	
 }
 
@@ -23,7 +22,7 @@ void ofApp::draw(){
 		ballPoints[i].set(bx,by,bz);
 		ballMasses[i] = massBase;
 	}
-	m_pMetaballs->UpdateBallsFromPointsAndMasses (nPoints, ballPoints, ballMasses);
+	m_pMetaballs.UpdateBallsFromPointsAndMasses (nPoints, ballPoints, ballMasses);
 
 	ofBackground(0);
 	
@@ -33,7 +32,7 @@ void ofApp::draw(){
 	ofNoFill();
 	ofBox(2);
 	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-	m_pMetaballs->Render();
+	m_pMetaballs.Render();
 	cam.end();
 	
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);

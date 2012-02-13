@@ -10,7 +10,7 @@ public:
 	void update();
 	void draw();
 	
-	CMetaballs *m_pMetaballs;
+	CMetaballs m_pMetaballs;
 	ofPoint *ballPoints;
 	float *ballMasses;
 	int nPoints;

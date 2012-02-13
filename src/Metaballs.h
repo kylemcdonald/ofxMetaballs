@@ -1,6 +1,5 @@
 #pragma once
 
-#define MAX_BALLS 4096
 #define MAX_VERTICES 60000
 #define MAX_INDICES 60000
 
@@ -34,15 +33,12 @@ struct SVertex
 class CMetaballs
 {
 public:
-	CMetaballs (int nB);
+	CMetaballs ();
 	
-	void Compute();
 	void Render();
-	void UpdateBallsFromPoints (int nPoints, ofPoint *points);
 	void UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses);
 	
 	void SetGridSize(int nSize);
-	int getNBalls();
 	
 protected:
 	float ComputeEnergy(float x, float y, float z);
@@ -64,9 +60,7 @@ protected:
 	
 	float m_fLevel;
 	
-	int m_nNumBalls;
-	SBall m_Balls[MAX_BALLS];
-	vector<SBall> m_vBalls;
+	vector<SBall> m_Balls;
 	
 	int m_nNumOpenVoxels;
 	int m_nMaxOpenVoxels;

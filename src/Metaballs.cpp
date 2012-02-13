@@ -344,10 +344,9 @@ char CMarchingCubes::m_CubeTriangles[256][16] =
 char CMarchingCubes::m_CubeNeighbors[256];
 
 //=============================================================================
-CMetaballs::CMetaballs (int nB)
+CMetaballs::CMetaballs ()
 {
 	m_fLevel    = 100.0f;
-	m_nNumBalls = nB;
 	
 	m_nGridSize = 0;
 	m_nGridSizep1 = 0;
@@ -366,14 +365,6 @@ CMetaballs::CMetaballs (int nB)
 	m_pIndices     = 0;
 	
 	srand(ofGetElapsedTimeMillis());
-	
-	for( int i = 0; i < m_nNumBalls; i++ ){
-		m_Balls[i].p[0] = 0;
-		m_Balls[i].p[1] = 0;
-		m_Balls[i].p[2] = 0;
-		m_Balls[i].m = 1;
-	}
-	
 }
 
 //=============================================================================
@@ -408,45 +399,22 @@ void CMetaballs::SetGridSize(int nSize)
 }
 
 //=============================================================================
-int CMetaballs::getNBalls(){
-	return m_nNumBalls;
-}
-//=============================================================================
-void CMetaballs::UpdateBallsFromPoints (int nPoints, ofPoint *points){
-	if (nPoints <= m_nNumBalls){
-		float lo = -1 + m_fVoxelSize*1.0;
-		float hi =  1 - m_fVoxelSize*1.0;
-		
-		for (int i=0; i<nPoints; i++){
-			float x = ofClamp(points[i].x, lo, hi);
-			float y = ofClamp(points[i].y, lo, hi);
-			float z = ofClamp(points[i].z, lo, hi);
-			
-			m_Balls[i].p[0] = points[i].x;
-			m_Balls[i].p[1] = points[i].y;
-			m_Balls[i].p[2] = points[i].z;
-		}
-	}
-}
-
-
-//=============================================================================
 void CMetaballs::UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses){
-	if (nPoints <= m_nNumBalls){
-		float lo = -1 + m_fVoxelSize*1.0;
-		float hi =  1 - m_fVoxelSize*1.0;
+	m_Balls.clear();
+	float lo = -1 + m_fVoxelSize*1.0;
+	float hi =  1 - m_fVoxelSize*1.0;
+	
+	for (int i=0; i<nPoints; i++){
+		float x = ofClamp(points[i].x, lo, hi);
+		float y = ofClamp(points[i].y, lo, hi);
+		float z = ofClamp(points[i].z, lo, hi);
+		float m = MAX(0, masses[i]);
 		
-		for (int i=0; i<nPoints; i++){
-			float x = ofClamp(points[i].x, lo, hi);
-			float y = ofClamp(points[i].y, lo, hi);
-			float z = ofClamp(points[i].z, lo, hi);
-			float m = MAX(0, masses[i]);
-			
-			m_Balls[i].p[0] = points[i].x;
-			m_Balls[i].p[1] = points[i].y;
-			m_Balls[i].p[2] = points[i].z;
-			m_Balls[i].m = m;
-		}
+		m_Balls.push_back(SBall());
+		m_Balls.back().p[0] = points[i].x;
+		m_Balls.back().p[1] = points[i].y;
+		m_Balls.back().p[2] = points[i].z;
+		m_Balls.back().m = m;
 	}
 }
 
@@ -463,7 +431,7 @@ void CMetaballs::Render()
 	memset(m_pnGridPointStatus, 0, (m_nGridSizep1)*(m_nGridSizep1)*(m_nGridSizep1));
 	memset(m_pnGridVoxelStatus, 0, (m_nGridSize  )*(m_nGridSize  )*(m_nGridSize  ));
 	
-	for( int i = 0; i < m_nNumBalls; i++ ){
+	for( int i = 0; i < m_Balls.size(); i++ ){
 		if (m_Balls[i].m > 0){
 			
 			x = ConvertWorldCoordinateToGridPoint(m_Balls[i].p[0]);
@@ -573,7 +541,7 @@ float CMetaballs::ComputeEnergy(float x, float y, float z)
 	float *p;
 	float dx,dy,dz;
 	
-	for( int i = 0; i < m_nNumBalls; i++ ){
+	for( int i = 0; i < m_Balls.size(); i++ ){
 		p = m_Balls[i].p;
 		dx = p[0] - x;
 		dy = p[1] - y;
@@ -603,7 +571,7 @@ void CMetaballs::ComputeNormal(SVertex *pVertex)
 	float fSqDist;
 	float K;
 	
-	for( int i = 0; i < m_nNumBalls; i ++ ){
+	for( int i = 0; i < m_Balls.size(); i ++ ){
 		// To compute the normal we derive the energy formula and get
 		//   n += 2 * mass * vector / distance^4
 		float *p = m_Balls[i].p;
