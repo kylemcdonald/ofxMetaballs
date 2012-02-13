@@ -5,17 +5,6 @@
 
 #include "ofMain.h"
 
-class CMarchingCubes
-{
-public:
-	static void BuildTables();
-	
-	static char m_CubeEdges[12][2];
-	static char m_CubeTriangles[256][16];
-	static char m_CubeNeighbors[256];
-	static float m_CubeVertices[8][3];
-};
-
 struct SBall
 {
 	float p[3];
@@ -30,10 +19,10 @@ struct SVertex
 	float t[2];
 };
 
-class CMetaballs
+class MarchingCubes
 {
 public:
-	CMetaballs ();
+	MarchingCubes ();
 	
 	void Render();
 	void UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses);
@@ -57,6 +46,13 @@ protected:
 	int ConvertWorldCoordinateToGridPoint(float x);
 	void AddNeighborsToList(int nCase, int x, int y, int z);
 	void AddNeighbor(int x, int y, int z);
+	
+	static void BuildTables();
+	static bool tablesBuilt;
+	static char m_CubeEdges[12][2];
+	static char m_CubeTriangles[256][16];
+	static char m_CubeNeighbors[256];
+	static float m_CubeVertices[8][3];
 	
 	float m_fLevel;
 	

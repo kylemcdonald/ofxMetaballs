@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-#include "Metaballs.h"
+#include "MarchingCubes.h"
 
 class ofApp : public ofBaseApp{	
 public:
@@ -10,7 +10,7 @@ public:
 	void update();
 	void draw();
 	
-	CMetaballs m_pMetaballs;
+	MarchingCubes m_pMetaballs;
 	ofPoint *ballPoints;
 	float *ballMasses;
 	int nPoints;

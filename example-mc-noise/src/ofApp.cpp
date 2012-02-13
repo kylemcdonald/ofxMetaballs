@@ -6,7 +6,6 @@ void ofApp::setup(){
 	ballPoints = new ofPoint[nPoints];
 	ballMasses = new float[nPoints];
 	m_pMetaballs.SetGridSize(128);
-	CMarchingCubes::BuildTables();	
 }
 
 void ofApp::update(){

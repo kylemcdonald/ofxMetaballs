@@ -1,8 +1,6 @@
-#include "Metaballs.h"
-#include <memory.h>
+#include "MarchingCubes.h"
 
-//=============================================================================
-void CMarchingCubes::BuildTables()
+void MarchingCubes::BuildTables()
 {
 	// Build CubeNeighbors table
 	
@@ -29,7 +27,6 @@ void CMarchingCubes::BuildTables()
 	}
 }
 
-//==============================================================================
 // Static data
 
 //        +----------+
@@ -59,7 +56,7 @@ void CMarchingCubes::BuildTables()
 //           0           
 
 // Cube vertices
-float CMarchingCubes::m_CubeVertices[8][3] = 
+float MarchingCubes::m_CubeVertices[8][3] = 
 {
 	{0,0,0},
 	{1,0,0},
@@ -73,7 +70,7 @@ float CMarchingCubes::m_CubeVertices[8][3] =
 
 // This is the edges and the direction on them. They are designed so
 // that edges of neighboring cubes are in the same direction.
-char CMarchingCubes::m_CubeEdges[12][2] = 
+char MarchingCubes::m_CubeEdges[12][2] = 
 {
 	{0,1}, {1,2}, {3,2}, {0,3},
 	{4,5}, {5,6}, {7,6}, {4,7},
@@ -81,7 +78,7 @@ char CMarchingCubes::m_CubeEdges[12][2] =
 };
 
 // This list gives the edges that the triangles in each case intersect.
-char CMarchingCubes::m_CubeTriangles[256][16] = 
+char MarchingCubes::m_CubeTriangles[256][16] = 
 { 
 	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, // 0  
 	{ 3,  0,  8, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}, // 1  
@@ -341,10 +338,10 @@ char CMarchingCubes::m_CubeTriangles[256][16] =
 	{-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}  // 255  
 };
 
-char CMarchingCubes::m_CubeNeighbors[256];
+char MarchingCubes::m_CubeNeighbors[256];
+bool MarchingCubes::tablesBuilt = false;
 
-//=============================================================================
-CMetaballs::CMetaballs ()
+MarchingCubes::MarchingCubes ()
 {
 	m_fLevel    = 100.0f;
 	
@@ -364,11 +361,13 @@ CMetaballs::CMetaballs ()
 	m_pVertices    = 0;
 	m_pIndices     = 0;
 	
-	srand(ofGetElapsedTimeMillis());
+	if(!tablesBuilt) {
+		BuildTables();
+		tablesBuilt = true;
+	}
 }
 
-//=============================================================================
-void CMetaballs::SetGridSize(int nSize)
+void MarchingCubes::SetGridSize(int nSize)
 {
 	m_fVoxelSize = 2.0/float(nSize);
 	m_nGridSize   = nSize;
@@ -398,8 +397,7 @@ void CMetaballs::SetGridSize(int nSize)
 	}
 }
 
-//=============================================================================
-void CMetaballs::UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses){
+void MarchingCubes::UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses){
 	m_Balls.clear();
 	float lo = -1 + m_fVoxelSize*1.0;
 	float hi =  1 - m_fVoxelSize*1.0;
@@ -418,8 +416,7 @@ void CMetaballs::UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, f
 	}
 }
 
-//=============================================================================
-void CMetaballs::Render()
+void MarchingCubes::Render()
 {
 	int nCase,x,y,z;
 	bool bComputed;
@@ -487,30 +484,28 @@ void CMetaballs::Render()
 		
 }
 
-//=============================================================================
-void CMetaballs::AddNeighborsToList(int nCase, int x, int y, int z)
+void MarchingCubes::AddNeighborsToList(int nCase, int x, int y, int z)
 {
-	if( CMarchingCubes::m_CubeNeighbors[nCase] & (1<<0) )
+	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<0) )
 		AddNeighbor(x+1, y, z);
 	
-	if( CMarchingCubes::m_CubeNeighbors[nCase] & (1<<1) )
+	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<1) )
 		AddNeighbor(x-1, y, z);
 	
-	if( CMarchingCubes::m_CubeNeighbors[nCase] & (1<<2) )
+	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<2) )
 		AddNeighbor(x, y+1, z);
 	
-	if( CMarchingCubes::m_CubeNeighbors[nCase] & (1<<3) )
+	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<3) )
 		AddNeighbor(x, y-1, z);
 	
-	if( CMarchingCubes::m_CubeNeighbors[nCase] & (1<<4) )
+	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<4) )
 		AddNeighbor(x, y, z+1);
 	
-	if( CMarchingCubes::m_CubeNeighbors[nCase] & (1<<5) )
+	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<5) )
 		AddNeighbor(x, y, z-1);
 }
 
-//=============================================================================
-void CMetaballs::AddNeighbor(int x, int y, int z)
+void MarchingCubes::AddNeighbor(int x, int y, int z)
 {
 	if( IsGridVoxelComputed(x,y,z) || IsGridVoxelInList(x,y,z) )
 		return;
@@ -533,8 +528,7 @@ void CMetaballs::AddNeighbor(int x, int y, int z)
 	m_nNumOpenVoxels++;
 }
 
-//=============================================================================
-float CMetaballs::ComputeEnergy(float x, float y, float z)
+float MarchingCubes::ComputeEnergy(float x, float y, float z)
 {
 	float fEnergy = 0;
 	float fSqDist;
@@ -565,8 +559,7 @@ float CMetaballs::ComputeEnergy(float x, float y, float z)
 	return fEnergy;
 }
 
-//=============================================================================
-void CMetaballs::ComputeNormal(SVertex *pVertex)
+void MarchingCubes::ComputeNormal(SVertex *pVertex)
 {
 	float fSqDist;
 	float K;
@@ -599,8 +592,7 @@ void CMetaballs::ComputeNormal(SVertex *pVertex)
 		
 }
 
-//=============================================================================
-inline float CMetaballs::ComputeGridPointEnergy(int x, int y, int z)
+inline float MarchingCubes::ComputeGridPointEnergy(int x, int y, int z)
 {
 	if( IsGridPointComputed(x,y,z) )
 		return m_pfGridEnergy[x +
@@ -630,8 +622,7 @@ inline float CMetaballs::ComputeGridPointEnergy(int x, int y, int z)
 	return out;
 }
 
-//=============================================================================
-int CMetaballs::ComputeGridVoxel(int x, int y, int z)
+int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 {
 	float b[8];
 	
@@ -668,7 +659,7 @@ int CMetaballs::ComputeGridVoxel(int x, int y, int z)
 	unsigned short EdgeIndices[12];
 	memset(EdgeIndices, 0xFF, 12*sizeof(unsigned short));
 	while(1){
-		int nEdge =	CMarchingCubes::m_CubeTriangles[c][i];
+		int nEdge =	MarchingCubes::m_CubeTriangles[c][i];
 		if( nEdge == -1 )
 			break;
 		
@@ -681,11 +672,11 @@ int CMetaballs::ComputeGridVoxel(int x, int y, int z)
 				// have been computed already in neighbouring voxels
 				
 				// Compute the vertex by interpolating between the two points
-				int nIndex0 = CMarchingCubes::m_CubeEdges[nEdge][0];
-				int nIndex1 = CMarchingCubes::m_CubeEdges[nEdge][1];
+				int nIndex0 = MarchingCubes::m_CubeEdges[nEdge][0];
+				int nIndex1 = MarchingCubes::m_CubeEdges[nEdge][1];
 				
-				float *mcvn0 = CMarchingCubes::m_CubeVertices[nIndex0];
-				float *mcvn1 = CMarchingCubes::m_CubeVertices[nIndex1];
+				float *mcvn0 = MarchingCubes::m_CubeVertices[nIndex0];
+				float *mcvn1 = MarchingCubes::m_CubeVertices[nIndex1];
 				
 				t = (m_fLevel - b[nIndex0])/(b[nIndex1] - b[nIndex0]);
 				omt = 1.0f - t;
@@ -737,21 +728,18 @@ int CMetaballs::ComputeGridVoxel(int x, int y, int z)
 
 
 
-//=============================================================================
-inline float CMetaballs::ConvertGridPointToWorldCoordinate(int x)
+inline float MarchingCubes::ConvertGridPointToWorldCoordinate(int x)
 {
 	return float(x)*m_fVoxelSize - 1.0f;
 }
 
-//=============================================================================
-int CMetaballs::ConvertWorldCoordinateToGridPoint(float x)
+int MarchingCubes::ConvertWorldCoordinateToGridPoint(float x)
 {
 	return int((x + 1.0f)/m_fVoxelSize + 0.5f);
 }
 
 
-//=============================================================================
-inline bool CMetaballs::IsGridPointComputed(int x, int y, int z)
+inline bool MarchingCubes::IsGridPointComputed(int x, int y, int z)
 {
 	if( m_pnGridPointStatus[x +
 	                        y*(m_nGridSize+1) +
@@ -761,8 +749,7 @@ inline bool CMetaballs::IsGridPointComputed(int x, int y, int z)
 		return false;
 }
 
-//=============================================================================
-inline bool CMetaballs::IsGridVoxelComputed(int x, int y, int z)
+inline bool MarchingCubes::IsGridVoxelComputed(int x, int y, int z)
 {
 	if( m_pnGridVoxelStatus[x +
 	                        y*m_nGridSize +
@@ -772,8 +759,7 @@ inline bool CMetaballs::IsGridVoxelComputed(int x, int y, int z)
 		return false;
 }
 
-//=============================================================================
-inline bool CMetaballs::IsGridVoxelInList(int x, int y, int z)
+inline bool MarchingCubes::IsGridVoxelInList(int x, int y, int z)
 {
 	if( m_pnGridVoxelStatus[x +
 	                        y*m_nGridSize +
@@ -783,24 +769,21 @@ inline bool CMetaballs::IsGridVoxelInList(int x, int y, int z)
 		return false;
 }
 
-//=============================================================================
-inline void CMetaballs::SetGridPointComputed(int x, int y, int z)
+inline void MarchingCubes::SetGridPointComputed(int x, int y, int z)
 {
 	m_pnGridPointStatus[x +
 	                    y*(m_nGridSizep1) +
 	                    z*(m_nGridSizep1)*(m_nGridSizep1)] = 1;
 }
 
-//=============================================================================
-inline void CMetaballs::SetGridVoxelComputed(int x, int y, int z)
+inline void MarchingCubes::SetGridVoxelComputed(int x, int y, int z)
 {
 	m_pnGridVoxelStatus[x +
 	                    y*m_nGridSize +
 	                    z*m_nGridSize*m_nGridSize] = 1;
 }
 
-//=============================================================================
-inline void CMetaballs::SetGridVoxelInList(int x, int y, int z)
+inline void MarchingCubes::SetGridVoxelInList(int x, int y, int z)
 {
 	m_pnGridVoxelStatus[x +
 	                    y*m_nGridSize +
