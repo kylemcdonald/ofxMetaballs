@@ -342,9 +342,7 @@ char MarchingCubes::m_CubeNeighbors[256];
 bool MarchingCubes::tablesBuilt = false;
 
 MarchingCubes::MarchingCubes ()
-{
-	m_fLevel    = 100.0f;
-	
+{	
 	m_nGridSize = 0;
 	m_nGridSizep1 = 0;
 	
@@ -403,7 +401,7 @@ void MarchingCubes::setCenters(const vector<ofVec3f>& centers){
 	for(int i = 0; i < centers.size(); i++) {
 		m_Balls.push_back(SBall());
 		m_Balls.back().p = centers[i];
-		m_Balls.back().m = .3;
+		m_Balls.back().m = 1;
 	}
 }
 
@@ -538,25 +536,13 @@ float MarchingCubes::ComputeEnergy(float x, float y, float z)
 	float fSqDist;
 	float dx,dy,dz;
 	
-	for( int i = 0; i < m_Balls.size(); i++ ){
-		ofVec3f& p = m_Balls[i].p;
-		dx = p[0] - x;
-		dy = p[1] - y;
-		dz = p[2] - z;
-		fSqDist = dx*dx + dy*dy + dz*dz;
-		if( fSqDist < 0.0001f ) fSqDist = 0.0001f;
-		
-		float r = sqrtf(fSqDist) / m_Balls[i].m;
-		float cur;
-		if(r < 1) {
-			// from ken perlin http://www.geisswerks.com/ryan/BLOBS/blobs.html
-			cur = r * r * r * (r * (r * 6 - 15) + 10);
-			cur = 1 - cur;
-		} else {
-			cur = 0;
-		}
-		
-		fEnergy += m_fLevel * cur;
+	ofVec3f vertex(x, y, z);
+	
+	for( int i = 0; i < m_Balls.size(); i++ ){	
+		ofVec3f& center = m_Balls[i].p;
+		float& mass = m_Balls[i].m;
+		float cur = getEnergy(vertex, center, minRadius * mass, maxRadius * mass);
+		fEnergy += cur;
 	}
 	
 	return fEnergy;
@@ -643,14 +629,14 @@ int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 	float fz = ConvertGridPointToWorldCoordinate(z) + m_fVoxelSize/2;
 	
 	int c = 0;
-	c |= b[0] > m_fLevel ?   1 : 0;
-	c |= b[1] > m_fLevel ?   2 : 0;
-	c |= b[2] > m_fLevel ?   4 : 0;
-	c |= b[3] > m_fLevel ?   8 : 0;
-	c |= b[4] > m_fLevel ?  16 : 0;
-	c |= b[5] > m_fLevel ?  32 : 0;
-	c |= b[6] > m_fLevel ?  64 : 0;
-	c |= b[7] > m_fLevel ? 128 : 0;
+	c |= b[0] > 1 ?   1 : 0;
+	c |= b[1] > 1 ?   2 : 0;
+	c |= b[2] > 1 ?   4 : 0;
+	c |= b[3] > 1 ?   8 : 0;
+	c |= b[4] > 1 ?  16 : 0;
+	c |= b[5] > 1 ?  32 : 0;
+	c |= b[6] > 1 ?  64 : 0;
+	c |= b[7] > 1 ? 128 : 0;
 	
 	// Compute vertices from marching pyramid case
 	fx = ConvertGridPointToWorldCoordinate(x);
@@ -681,7 +667,7 @@ int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 				float *mcvn0 = MarchingCubes::m_CubeVertices[nIndex0];
 				float *mcvn1 = MarchingCubes::m_CubeVertices[nIndex1];
 				
-				t = (m_fLevel - b[nIndex0])/(b[nIndex1] - b[nIndex0]);
+				t = (1 - b[nIndex0])/(b[nIndex1] - b[nIndex0]);
 				omt = 1.0f - t;
 				
 				m_pVertices[m_nNumVertices].v[0] = mcvn0[0]*omt + mcvn1[0]*t;

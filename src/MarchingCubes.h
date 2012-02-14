@@ -51,7 +51,6 @@ protected:
 	static char m_CubeNeighbors[256];
 	static float m_CubeVertices[8][3];
 	
-	float m_fLevel;
 	vector<SBall> m_Balls;
 	ofMesh mesh;
 	float minRadius, maxRadius;
