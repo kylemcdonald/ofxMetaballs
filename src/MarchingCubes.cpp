@@ -1,5 +1,7 @@
 #include "MarchingCubes.h"
 
+float fLevel = .5;
+
 void MarchingCubes::BuildTables()
 {
 	// Build CubeNeighbors table
@@ -400,7 +402,7 @@ void MarchingCubes::setCenters(const vector<ofVec3f>& centers){
 	m_Balls.clear();
 	for(int i = 0; i < centers.size(); i++) {
 		m_Balls.push_back(SBall());
-		m_Balls.back().p = centers[i];
+		m_Balls.back().p = centers[i] * 2 - 1;
 		m_Balls.back().m = 1;
 	}
 }
@@ -521,7 +523,7 @@ void MarchingCubes::AddNeighbor(int x, int y, int z)
 
 // modified from ken perlin http://www.geisswerks.com/ryan/BLOBS/blobs.html
 inline float getEnergy(const ofVec3f& vertex, const ofVec3f& center, float min, float max) {
-	float r = vertex.distance(center);
+	float r = vertex.distance(center) / 2; // / 2 because the space is double size. but this isn't quite right
 	if(r >= max) {
 		return 0;
 	}
@@ -631,14 +633,14 @@ int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 	float fz = ConvertGridPointToWorldCoordinate(z) + m_fVoxelSize/2;
 	
 	int c = 0;
-	c |= b[0] > 1 ?   1 : 0;
-	c |= b[1] > 1 ?   2 : 0;
-	c |= b[2] > 1 ?   4 : 0;
-	c |= b[3] > 1 ?   8 : 0;
-	c |= b[4] > 1 ?  16 : 0;
-	c |= b[5] > 1 ?  32 : 0;
-	c |= b[6] > 1 ?  64 : 0;
-	c |= b[7] > 1 ? 128 : 0;
+	c |= b[0] > fLevel ?   1 : 0;
+	c |= b[1] > fLevel ?   2 : 0;
+	c |= b[2] > fLevel ?   4 : 0;
+	c |= b[3] > fLevel ?   8 : 0;
+	c |= b[4] > fLevel ?  16 : 0;
+	c |= b[5] > fLevel ?  32 : 0;
+	c |= b[6] > fLevel ?  64 : 0;
+	c |= b[7] > fLevel ? 128 : 0;
 	
 	// Compute vertices from marching pyramid case
 	fx = ConvertGridPointToWorldCoordinate(x);
@@ -669,7 +671,7 @@ int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 				float *mcvn0 = MarchingCubes::m_CubeVertices[nIndex0];
 				float *mcvn1 = MarchingCubes::m_CubeVertices[nIndex1];
 				
-				t = (1 - b[nIndex0])/(b[nIndex1] - b[nIndex0]);
+				t = (fLevel - b[nIndex0])/(b[nIndex1] - b[nIndex0]);
 				omt = 1.0f - t;
 				
 				m_pVertices[m_nNumVertices].v[0] = mcvn0[0]*omt + mcvn1[0]*t;
@@ -703,7 +705,7 @@ int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 	for (int i=0; i<m_nNumIndices; i++){
 		SVertex V = m_pVertices[m_pIndices[i]];
 		mesh.addNormal(V.n);
-		mesh.addVertex(V.v);
+		mesh.addVertex((V.v + 1) / 2);
 	}
 	
 	m_nNumVertices = 0;

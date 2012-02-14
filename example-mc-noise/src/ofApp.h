@@ -12,5 +12,4 @@ public:
 	
 	MarchingCubes iso;
 	ofEasyCam cam;
-	ofLight light;
 };

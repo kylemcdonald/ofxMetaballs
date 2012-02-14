@@ -1,21 +1,26 @@
 #include "ofApp.h"
 
 void ofApp::setup() {
+	ofSeedRandom(0);
 	ofSetVerticalSync(true);
+
 	iso.setup(32);
-	light.enable();
-	light.setPosition(500, 0, 0);
-	glEnable(GL_NORMALIZE);
-	glEnable(GL_DEPTH_TEST);
+	
+	vector<ofVec3f> centers;
+	for(int i = 0; i < 5; i++) {
+		centers.push_back(ofVec3f(ofRandomuf(), ofRandomuf(), ofRandomuf()));
+	}
+	iso.setCenters(centers);
+	iso.setRadius(8/32., 16./32.);
+	iso.update();
+	
+	ofMesh mesh = iso.getMesh();
+	mesh.save("out-ascii.ply", false);
+	mesh.save("out-binary.ply", true);
 }  
 
 void ofApp::update() {
-	if(ofGetFrameNum() == 0 || ofGetKeyPressed()) {
-		vector<ofVec3f> centers;
-		for(int i = 0; i < 500; i++) {
-			centers.push_back(ofVec3f(ofRandomf(), ofRandomf(), ofRandomf()));
-		}
-		iso.setCenters(centers);
+	if(ofGetKeyPressed()) {
 		iso.setRadius(mouseX / (float) ofGetWidth(), (mouseX + mouseY) / (float) ofGetHeight());
 		iso.update();
 	}
@@ -24,10 +29,8 @@ void ofApp::update() {
 void ofApp::draw() {
 	ofBackground(0);
 	cam.begin();
-	ofEnableLighting();
-	ofScale(200, 200, 200);
+	ofScale(400, 400, 400);
 	iso.draw();
-	ofDisableLighting();
 	cam.end();
 	
 	ofDrawBitmapString(ofToString((int) ofGetFrameRate()), 10, 20);
