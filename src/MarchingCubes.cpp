@@ -405,6 +405,12 @@ void MarchingCubes::setCenters(const vector<ofVec3f>& centers){
 	}
 }
 
+void MarchingCubes::setMasses(const vector<float>& masses) {
+	for(int i = 0; i < masses.size(); i++) {
+		m_Balls[i].m = masses[i];
+	}
+}
+
 void MarchingCubes::setRadius(float minRadius, float maxRadius) {
 	this->minRadius = ofClamp(minRadius, 0, 1);
 	this->maxRadius = ofClamp(maxRadius, 0, 1);

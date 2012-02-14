@@ -22,6 +22,7 @@ public:
 	void draw();
 	
 	void setCenters(const vector<ofVec3f>& centers);
+	void setMasses(const vector<float>& masses);
 	void setRadius(float minRadius, float maxRadius);
 	
 	const ofMesh& getMesh() const;
