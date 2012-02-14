@@ -398,6 +398,6 @@ void MarchingTetrahedrons::draw() {
 	mesh.drawWireframe();
 }
 
-ofMesh MarchingTetrahedrons::getMesh() {
+const ofMesh& MarchingTetrahedrons::getMesh() const {
 	return mesh;
 }

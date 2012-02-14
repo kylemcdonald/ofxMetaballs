@@ -5,31 +5,28 @@
 
 #include "ofMain.h"
 
-struct SBall
-{
-	float p[3];
+struct SBall {
+	ofVec3f p;
 	float m;
 };
 
-#define FVF_VERTEX (D3DFVF_XYZ|D3DFVF_NORMAL|D3DFVF_TEX1)
-struct SVertex
-{
-	float v[3];
-	float n[3];
-	float t[2];
+struct SVertex {
+	ofVec3f v, n;
 };
 
-class MarchingCubes
-{
+class MarchingCubes {
 public:
-	MarchingCubes ();
+	MarchingCubes();
+	void setup(int resolution);	
+	void update();
+	void draw();
 	
-	void Render();
-	void UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses);
+	void setCenters(const vector<ofVec3f>& centers);
+	void setRadius(float minRadius, float maxRadius);
 	
-	void SetGridSize(int nSize);
+	const ofMesh& getMesh() const;
 	
-protected:
+protected:	
 	float ComputeEnergy(float x, float y, float z);
 	void ComputeNormal(SVertex *pVertex);
 	inline float ComputeGridPointEnergy(int x, int y, int z);
@@ -55,8 +52,9 @@ protected:
 	static float m_CubeVertices[8][3];
 	
 	float m_fLevel;
-	
 	vector<SBall> m_Balls;
+	ofMesh mesh;
+	float minRadius, maxRadius;
 	
 	int m_nNumOpenVoxels;
 	int m_nMaxOpenVoxels;

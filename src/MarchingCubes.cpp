@@ -367,15 +367,19 @@ MarchingCubes::MarchingCubes ()
 	}
 }
 
-void MarchingCubes::SetGridSize(int nSize)
+void MarchingCubes::setup(int resolution)
 {
-	m_fVoxelSize = 2.0/float(nSize);
-	m_nGridSize   = nSize;
+	m_fVoxelSize = 2.0/float(resolution);
+	m_nGridSize   = resolution;
 	m_nGridSizep1 = m_nGridSize+1;
 	
-	m_pfGridEnergy      = new float[(nSize+1)*(nSize+1)*(nSize+1)];
-	m_pnGridPointStatus = new char [(nSize+1)*(nSize+1)*(nSize+1)];
-	m_pnGridVoxelStatus = new char [ nSize*    nSize*    nSize];
+	if(minRadius == 0 && maxRadius == 0) {
+		setRadius(1. / resolution, 3. / resolution);
+	}
+	
+	m_pfGridEnergy      = new float[(resolution+1)*(resolution+1)*(resolution+1)];
+	m_pnGridPointStatus = new char [(resolution+1)*(resolution+1)*(resolution+1)];
+	m_pnGridVoxelStatus = new char [ resolution*    resolution*    resolution];
 	
 	m_nMaxNumVertices = MAX_VERTICES;
 	m_nMaxNumIndices  = MAX_INDICES;
@@ -386,9 +390,6 @@ void MarchingCubes::SetGridSize(int nSize)
 			m_pVertices[i].v[j] = 0;
 			m_pVertices[i].n[j] = 0;
 		}
-		for (int j=0; j<2; j++){
-			m_pVertices[i].t[j] = 0;
-		}
 	}
 	
 	m_pIndices = new unsigned short[m_nMaxNumIndices];
@@ -397,27 +398,25 @@ void MarchingCubes::SetGridSize(int nSize)
 	}
 }
 
-void MarchingCubes::UpdateBallsFromPointsAndMasses (int nPoints, ofPoint *points, float *masses){
+void MarchingCubes::setCenters(const vector<ofVec3f>& centers){
 	m_Balls.clear();
-	float lo = -1 + m_fVoxelSize*1.0;
-	float hi =  1 - m_fVoxelSize*1.0;
-	
-	for (int i=0; i<nPoints; i++){
-		float x = ofClamp(points[i].x, lo, hi);
-		float y = ofClamp(points[i].y, lo, hi);
-		float z = ofClamp(points[i].z, lo, hi);
-		float m = MAX(0, masses[i]);
-		
+	for(int i = 0; i < centers.size(); i++) {
 		m_Balls.push_back(SBall());
-		m_Balls.back().p[0] = points[i].x;
-		m_Balls.back().p[1] = points[i].y;
-		m_Balls.back().p[2] = points[i].z;
-		m_Balls.back().m = m;
+		m_Balls.back().p = centers[i];
+		m_Balls.back().m = .3;
 	}
 }
 
-void MarchingCubes::Render()
+void MarchingCubes::setRadius(float minRadius, float maxRadius) {
+	this->minRadius = ofClamp(minRadius, 0, 1);
+	this->maxRadius = ofClamp(maxRadius, 0, 1);
+}
+
+void MarchingCubes::update()
 {
+	mesh.clear();
+	mesh.setMode(OF_PRIMITIVE_TRIANGLES);
+
 	int nCase,x,y,z;
 	bool bComputed;
 	
@@ -469,19 +468,11 @@ void MarchingCubes::Render()
 				AddNeighborsToList(nCase,x,y,z);
 			}
 		}
-	}
-	
-	
-	// Render the computed triangles!
-	glBegin(GL_TRIANGLES);
-	for (int i=0; i<m_nNumIndices; i++){
-		int index0 = (int) m_pIndices[i];
-		SVertex V = m_pVertices[index0];
-		glNormal3fv(V.n);
-		glVertex3fv(V.v);
-	}
-	glEnd();
-		
+	}		
+}
+
+void MarchingCubes::draw() {
+	mesh.draw();
 }
 
 void MarchingCubes::AddNeighborsToList(int nCase, int x, int y, int z)
@@ -528,15 +519,27 @@ void MarchingCubes::AddNeighbor(int x, int y, int z)
 	m_nNumOpenVoxels++;
 }
 
+// modified from ken perlin http://www.geisswerks.com/ryan/BLOBS/blobs.html
+inline float getEnergy(const ofVec3f& vertex, const ofVec3f& center, float min, float max) {
+	float r = vertex.distance(center);
+	if(r >= max) {
+		return 0;
+	}
+	if(r <= min) {
+		return 1;
+	}
+	r = (r - min) / (max - min);
+	return 1 - (r * r * r * (r * (r * 6 - 15) + 10));
+}
+
 float MarchingCubes::ComputeEnergy(float x, float y, float z)
 {
 	float fEnergy = 0;
 	float fSqDist;
-	float *p;
 	float dx,dy,dz;
 	
 	for( int i = 0; i < m_Balls.size(); i++ ){
-		p = m_Balls[i].p;
+		ofVec3f& p = m_Balls[i].p;
 		dx = p[0] - x;
 		dy = p[1] - y;
 		dz = p[2] - z;
@@ -567,8 +570,8 @@ void MarchingCubes::ComputeNormal(SVertex *pVertex)
 	for( int i = 0; i < m_Balls.size(); i ++ ){
 		// To compute the normal we derive the energy formula and get
 		//   n += 2 * mass * vector / distance^4
-		float *p = m_Balls[i].p;
-		float *v = pVertex->v;
+		ofVec3f& p = m_Balls[i].p;
+		ofVec3f& v = pVertex->v;
 		float x = v[0] - p[0];
 		float y = v[1] - p[1];
 		float z = v[2] - p[2];
@@ -709,15 +712,11 @@ int MarchingCubes::ComputeGridVoxel(int x, int y, int z)
 	
 	SetGridVoxelComputed (x,y,z);
 	
-	
-	// Render the computed triangles!		
-	glBegin(GL_TRIANGLES);
 	for (int i=0; i<m_nNumIndices; i++){
 		SVertex V = m_pVertices[m_pIndices[i]];
-		glNormal3fv(V.n);
-		glVertex3fv(V.v);
+		mesh.addNormal(V.n);
+		mesh.addVertex(V.v);
 	}
-	glEnd();	
 	
 	m_nNumVertices = 0;
 	m_nNumIndices = 0;

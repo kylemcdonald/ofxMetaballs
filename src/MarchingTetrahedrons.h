@@ -18,7 +18,7 @@ public:
 	void setCenters(const vector<ofVec3f>& centers);
 	void setRadius(float minRadius, float maxRadius);
 	
-	ofMesh getMesh();
+	const ofMesh& getMesh() const;
 	
 protected:
 	ofMesh mesh;
