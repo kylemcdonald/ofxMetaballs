@@ -7,8 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		27DA7C5814E9D15F005FA219 /* MarchingTetrahedrons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DA7C5414E9D15F005FA219 /* MarchingTetrahedrons.cpp */; };
-		27DA7C5914E9D15F005FA219 /* MarchingCubes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27DA7C5614E9D15F005FA219 /* MarchingCubes.cpp */; };
+		27EF39CD14EA3F4400A9C36B /* MarchingCubes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27EF39C814EA3F4400A9C36B /* MarchingCubes.cpp */; };
+		27EF39CE14EA3F4400A9C36B /* MarchingTetrahedrons.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 27EF39CA14EA3F4400A9C36B /* MarchingTetrahedrons.cpp */; };
 		BBAB23CB13894F3D00AA2426 /* GLUT.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BBAB23BE13894E4700AA2426 /* GLUT.framework */; };
 		E4328149138ABC9F0047C5CB /* openFrameworks.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E4328148138ABC890047C5CB /* openFrameworks.a */; };
 		E45BE97B0E8CC7DD009D7055 /* AGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E45BE9710E8CC7DD009D7055 /* AGL.framework */; };
@@ -59,10 +59,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		27DA7C5414E9D15F005FA219 /* MarchingTetrahedrons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MarchingTetrahedrons.cpp; path = ../src/MarchingTetrahedrons.cpp; sourceTree = SOURCE_ROOT; };
-		27DA7C5514E9D15F005FA219 /* MarchingTetrahedrons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarchingTetrahedrons.h; path = ../src/MarchingTetrahedrons.h; sourceTree = SOURCE_ROOT; };
-		27DA7C5614E9D15F005FA219 /* MarchingCubes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarchingCubes.cpp; sourceTree = "<group>"; };
-		27DA7C5714E9D15F005FA219 /* MarchingCubes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarchingCubes.h; sourceTree = "<group>"; };
+		27EF39C814EA3F4400A9C36B /* MarchingCubes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MarchingCubes.cpp; path = ../src/MarchingCubes.cpp; sourceTree = SOURCE_ROOT; };
+		27EF39C914EA3F4400A9C36B /* MarchingCubes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarchingCubes.h; path = ../src/MarchingCubes.h; sourceTree = SOURCE_ROOT; };
+		27EF39CA14EA3F4400A9C36B /* MarchingTetrahedrons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MarchingTetrahedrons.cpp; path = ../src/MarchingTetrahedrons.cpp; sourceTree = SOURCE_ROOT; };
+		27EF39CB14EA3F4400A9C36B /* MarchingTetrahedrons.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MarchingTetrahedrons.h; path = ../src/MarchingTetrahedrons.h; sourceTree = SOURCE_ROOT; };
+		27EF39CC14EA3F4400A9C36B /* ofxMetaball.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ofxMetaball.h; path = ../src/ofxMetaball.h; sourceTree = SOURCE_ROOT; };
 		BBAB23BE13894E4700AA2426 /* GLUT.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GLUT.framework; path = ../../../libs/glut/lib/osx/GLUT.framework; sourceTree = "<group>"; };
 		E4328143138ABC890047C5CB /* openFrameworksLib.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = openFrameworksLib.xcodeproj; path = ../../../libs/openFrameworksCompiled/project/osx/openFrameworksLib.xcodeproj; sourceTree = SOURCE_ROOT; };
 		E45BE9710E8CC7DD009D7055 /* AGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AGL.framework; path = /System/Library/Frameworks/AGL.framework; sourceTree = "<absolute>"; };
@@ -111,21 +112,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		27DA7C4D14E9D143005FA219 /* ofxIsosurface */ = {
+		27B9718314EA3F0800C43E67 /* ofxMetaball */ = {
 			isa = PBXGroup;
 			children = (
-				27DA7C5314E9D15F005FA219 /* src */,
+				27EF39C714EA3F4400A9C36B /* src */,
 			);
-			name = ofxIsosurface;
+			name = ofxMetaball;
 			sourceTree = "<group>";
 		};
-		27DA7C5314E9D15F005FA219 /* src */ = {
+		27EF39C714EA3F4400A9C36B /* src */ = {
 			isa = PBXGroup;
 			children = (
-				27DA7C5414E9D15F005FA219 /* MarchingTetrahedrons.cpp */,
-				27DA7C5514E9D15F005FA219 /* MarchingTetrahedrons.h */,
-				27DA7C5614E9D15F005FA219 /* MarchingCubes.cpp */,
-				27DA7C5714E9D15F005FA219 /* MarchingCubes.h */,
+				27EF39C814EA3F4400A9C36B /* MarchingCubes.cpp */,
+				27EF39C914EA3F4400A9C36B /* MarchingCubes.h */,
+				27EF39CA14EA3F4400A9C36B /* MarchingTetrahedrons.cpp */,
+				27EF39CB14EA3F4400A9C36B /* MarchingTetrahedrons.h */,
+				27EF39CC14EA3F4400A9C36B /* ofxMetaball.h */,
 			);
 			name = src;
 			path = ../src;
@@ -134,7 +136,7 @@
 		BB4B014C10F69532006C3DED /* addons */ = {
 			isa = PBXGroup;
 			children = (
-				27DA7C4D14E9D143005FA219 /* ofxIsosurface */,
+				27B9718314EA3F0800C43E67 /* ofxMetaball */,
 			);
 			name = addons;
 			sourceTree = "<group>";
@@ -300,8 +302,8 @@
 			files = (
 				E4B69E200A3A1BDC003C02F2 /* main.cpp in Sources */,
 				E4B69E210A3A1BDC003C02F2 /* ofApp.cpp in Sources */,
-				27DA7C5814E9D15F005FA219 /* MarchingTetrahedrons.cpp in Sources */,
-				27DA7C5914E9D15F005FA219 /* MarchingCubes.cpp in Sources */,
+				27EF39CD14EA3F4400A9C36B /* MarchingCubes.cpp in Sources */,
+				27EF39CE14EA3F4400A9C36B /* MarchingTetrahedrons.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

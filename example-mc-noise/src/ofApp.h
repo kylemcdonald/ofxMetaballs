@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-#include "MarchingCubes.h"
+#include "ofxMetaball.h"
 
 class ofApp : public ofBaseApp {
 public:

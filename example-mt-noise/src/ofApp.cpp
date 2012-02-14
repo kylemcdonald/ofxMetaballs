@@ -10,7 +10,7 @@ void ofApp::setup() {
 		centers.push_back(ofVec3f(ofRandomf(), ofRandomf(), ofRandomf()));
 	}
 	iso.setCenters(centers);
-	iso.setRadius(10./128, 40./128);
+	iso.setRadius(2/32., 8./32.);
 	iso.update();
 	
 	ofMesh mesh = iso.getMesh();

@@ -475,10 +475,6 @@ void MarchingCubes::update()
 	}		
 }
 
-void MarchingCubes::draw() {
-	mesh.draw();
-}
-
 void MarchingCubes::AddNeighborsToList(int nCase, int x, int y, int z)
 {
 	if( MarchingCubes::m_CubeNeighbors[nCase] & (1<<0) )
@@ -779,4 +775,21 @@ inline void MarchingCubes::SetGridVoxelInList(int x, int y, int z)
 	m_pnGridVoxelStatus[x +
 	                    y*m_nGridSize +
 	                    z*m_nGridSize*m_nGridSize] = 2;
+}
+
+void MarchingCubes::draw() {
+	ofSetColor(255);
+	glEnable(GL_DEPTH_TEST);
+	ofNoFill();
+	ofBox(1);
+	ofTranslate(-.5, -.5, -.5);
+	ofSetColor(0);
+	mesh.draw();
+	ofSetColor(255);
+	glDepthFunc(GL_LEQUAL);
+	mesh.drawWireframe();
+}
+
+const ofMesh& MarchingCubes::getMesh() const {
+	return mesh;
 }
