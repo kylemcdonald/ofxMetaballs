@@ -415,7 +415,7 @@ void MarchingCubes::setMasses(const vector<float>& masses) {
 
 void MarchingCubes::setRadius(float minRadius, float maxRadius) {
 	this->minRadius = ofClamp(minRadius, 0, 1);
-	this->maxRadius = ofClamp(maxRadius, 0, 1);
+	this->maxRadius = ofClamp(maxRadius, minRadius, 1);
 }
 
 void MarchingCubes::update()

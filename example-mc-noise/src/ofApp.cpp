@@ -4,10 +4,10 @@ void ofApp::setup() {
 	ofSeedRandom(0);
 	ofSetVerticalSync(true);
 
-	iso.setup(32);
+	iso.setup(64);
 	
 	vector<ofVec3f> centers;
-	for(int i = 0; i < 5; i++) {
+	for(int i = 0; i < 12; i++) {
 		centers.push_back(ofVec3f(ofRandomuf(), ofRandomuf(), ofRandomuf()));
 	}
 	iso.setCenters(centers);
@@ -21,7 +21,9 @@ void ofApp::setup() {
 
 void ofApp::update() {
 	if(ofGetKeyPressed()) {
-		iso.setRadius(mouseX / (float) ofGetWidth(), (mouseX + mouseY) / (float) ofGetHeight());
+		float minRadius = mouseX / (float) ofGetWidth();
+		float maxRadius = (mouseY) / (float) ofGetHeight();
+		iso.setRadius(minRadius, minRadius + maxRadius);
 		iso.update();
 	}
 }
