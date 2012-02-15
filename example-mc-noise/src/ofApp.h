@@ -2,7 +2,7 @@
 
 #include "ofMain.h"
 
-#include "ofxMetaball.h"
+#include "ofxMetaballs.h"
 
 class ofApp : public ofBaseApp {
 public:
